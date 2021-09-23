@@ -27,7 +27,7 @@ jobs:
         cd infra_project/
         python manage.py test
 
-deploy:
+  deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
     steps:
