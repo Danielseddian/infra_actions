@@ -11,7 +11,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
+        username: ${{ secrets.USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
         python-version: 3.8
 
@@ -26,3 +26,19 @@ jobs:
         python -m flake8
         cd infra_project/
         python manage.py test
+
+deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push_to_docker_hub
+    steps:
+    - name: executing remote ssh commands to deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.PASSPHRASE }}
+        script: |
+          sudo docker pull ${{ secrets.USERNAME }}/infra_actions
+          sudo docker stop $(sudo docker ps -a -q)
+          sudo docker run --rm -d -p 80:80 ${{ secrets.USERNAME }}/infra_actions
