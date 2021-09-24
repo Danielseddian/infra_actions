@@ -59,5 +59,4 @@ jobs:
         script: |
           sudo docker pull danielseddian/infra_actions
           sudo docker stop $(sudo docker ps -a -q)
-          cd infra_actions
           sudo docker run --rm -d -p 80:80 danielseddian/infra_actions
